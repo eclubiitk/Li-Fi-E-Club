@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 hello world
+=======
+sdvhsjg
+djkskjsdjkg
+dsbjhg
+>>>>>>> e7d30ce2db7000bc4a66a12d7b7aa9a91a53f49f
