@@ -1,9 +1,9 @@
 #include <String.h>
-String userinput="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+String userinput="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 int i=0;
 int len;
 byte arr[9];
-int laserPin=13;
+int laserPin=6;
 int j,count;
 //int k=0;
 
@@ -26,11 +26,11 @@ void loop()
  if (count != 0){
   for (j=0;j<9;j++){
     digitalWrite(laserPin,arr[j]);
-    delay(10);
+    delay(50);
     Serial.println(arr[j]);
     if(arr[j]==0){digitalWrite(laserPin,1);Serial.println(1);}
     else{digitalWrite(laserPin,0);Serial.println(0);}    
-    delay(10);
+    delay(50);
     Serial.flush();
     //delay(7);
     //k+=2;
