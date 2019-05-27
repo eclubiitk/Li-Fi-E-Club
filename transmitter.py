@@ -1,4 +1,4 @@
-string ="g"#input("")#justchange input
+string =input("")#justchange input
 string2=""
 for x in string:
     i=ord(x)
