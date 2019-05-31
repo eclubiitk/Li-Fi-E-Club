@@ -26,9 +26,10 @@ void loop() {
   {
     for(int p=0;p<7;p++)
     {
-      k=int(strin[i+p]);
-      
-      j+=(k*pow(2,p));    
+      if(strin[i+p]=="1")
+      j+=(1*pow(2,p));  
+      else{continue;
+      }
       
     }
     char c=char(j);
