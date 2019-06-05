@@ -1,5 +1,6 @@
 int pulse_time = 150 ;
 int start = 785 ;
+int ends  = 423 ;
 String data = ":-)\nLi-Fi is the best Project.\nChange my MIND." ;
 int output_pin = 6 ;
 int temp = 10 ;
@@ -76,6 +77,7 @@ void loop() {
       sendnum(enc((int)f));
     }
     sendnum(enc(10))  ;
+    sendnum(ends) ;
     // sendbit(1) ;
     // sendbit(0) ;
     // sendbit(1) ;
