@@ -1,11 +1,14 @@
 int pulse_time = 150 ;
 int start = 785 ;
 int ends  = 423 ;
-String data = ":-)\nLi-Fi is the best Project.\nChange my MIND." ;
+String data = ":-)\nLi-Fi is the best Project.\nChange my MIND.\nThe quick brown fox jumps over the lazy dog." ;
+// String data="";
 int output_pin = 6 ;
 int temp = 10 ;
+
 void setup() {
   pinMode(output_pin, OUTPUT) ;
+  //Serial.begin(230400) ;
 }
 
 int enc_backend(int in) {
@@ -78,12 +81,4 @@ void loop() {
     }
     sendnum(enc(10))  ;
     sendnum(ends) ;
-    // sendbit(1) ;
-    // sendbit(0) ;
-    // sendbit(1) ;
-    // sendbit(1) ;
-    // sendbit(1) ;
-    // sendbit(0) ;
-    // sendbit(1) ;
-    // sendbit(0) ;
 }
