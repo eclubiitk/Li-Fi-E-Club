@@ -1,12 +1,25 @@
-int delmicro=150;
-int pinNum=3;
-void setup()
-{
+int pin = 3;
+unsigned long duration;
+
+void setup() {
   Serial.begin(230400);
-  pinMode(pinNum,INPUT);
+  pinMode(pin, INPUT);
 }
-void loop()
-{
-  Serial.println(digitalRead(pinNum));
-  delayMicroseconds(delmicro);
+
+int flag = 1 ;
+void loop() {
+  duration = pulseIn(pin, HIGH);
+  if(135 < duration && duration < 165) {
+    if(flag == 1) {
+      Serial.println(1) ;
+      flag = 0 ;
+    }
+    else {
+      flag = 1 ;
+    }
+  }
+  else {
+    Serial.println(0) ;
+  }
+  // Serial.println(duration);
 }

@@ -1,37 +1,61 @@
 import serial
-inp=input("Enter the port : ")
-ser=serial.Serial(inp,baudrate=230400,timeout=None)
-data_old=0 # always the first-fixed bit
-skipped=0
-cntr=0
-fl=1
-su=0
-cx=0
-while True:
-    if (skipped!=0):
-        data_old=ser.readline().decode('ascii')[0]
-        data_old=int(data_old)
-        skipped-=1
-        continue
-    data_new=ser.readline().decode('ascii')[0]
-    data_new=int(data_new)
-    if (data_old!=data_new):
-        skipped=3
-        # print(data_old)
-        if(fl==1):
-            if(data_old==0):
-                cntr+=1
-            if(data_old==1):
-                cntr=0
-            if(cntr==27):
-                # print("Connection Established")
-                cntr=0
-                fl=0
-                continue
-        if(fl==0):
-            cx+=1
-            su=int(data_old)+su*2
-            if(cx==8):
-                print(chr(su), end='')
-                cx=0
-                su=0
+ser = serial.Serial()
+ser.baudrate=230400
+ser.port = '/dev/ttyUSB0'
+ser.open()
+queue = [0,0,0,0,0,0,0,0,0,0]
+start_seq = [1,1,0,0,0,1,0,0,0,1]
+x={'11110':'0000',
+'01001':'0001',
+'10100':'0010',
+'10101':'0011',
+'01010':'0100',
+'01011':'0101',
+'01110':'0110',
+'01111':'0111',
+'10010':'1000',
+'10011':'1001',
+'10110':'1010',
+'10111':'1011',
+'11010':'1100',
+'11011':'1101',
+'11100':'1110',
+'11101':'1111'}
+x2={'11110':0,
+'01001':1,
+'10100':2,
+'10101':3,
+'01010':4,
+'01011':5,
+'01110':6,
+'01111':7,
+'10010':8,
+'10011':9,
+'10110':10,
+'10111':11,
+'11010':12,
+'11011':13,
+'11100':14,
+'11101':15}
+
+def queuecomp(queue1, queue2) :
+    if(queue1!=queue2):
+        return False
+    return True
+
+while  True :
+    while queuecomp(queue, start_seq) == False :
+        val = ser.readline().decode('ascii')[0]
+        val = int(val)
+        queue.pop(0)
+        queue.append(val)
+    # print(queue)
+    for i in range(10):
+        queue.pop(0)
+        val = (ser.readline().decode('ascii')[0])
+        queue.append(val)
+    queuex=''.join(queue)
+    q1=x2[queuex[0:5]]
+    q2=x2[queuex[5:]]
+    num=q1*16+q2
+    print(chr(num),end='')
