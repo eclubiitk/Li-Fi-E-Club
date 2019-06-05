@@ -4,6 +4,7 @@ ser.baudrate=230400
 # ser.port = '/dev/ttyUSB0'
 ser.port='COM3'
 ser.open()
+flag=0
 queue = [0,0,0,0,0,0,0,0,0,0]
 start_seq = [1,1,0,0,0,1,0,0,0,1]
 end_seq=[0,1,1,0,1,0,0,1,1,1]
@@ -58,7 +59,10 @@ while  True :
             val = (ser.readline().decode('ascii')[0])
             queue.append(int(val))
             q.append(val)
-        if(queuecomp(queue, start_seq)==True):
+        if(queuecomp(queue, end_seq)==True):
+            flag=1
+            break
+        if(flag==1):
             break
         queuex=''.join(q)
         q1=x2[queuex[0:5]]
