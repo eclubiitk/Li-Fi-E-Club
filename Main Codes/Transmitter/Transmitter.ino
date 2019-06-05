@@ -1,6 +1,6 @@
 int pulse_time = 150 ;
 int start = 785 ;
-String data = "Nigga" ;
+String data = ":-)\nLi-Fi is the best Project.\nChange my MIND." ;
 int output_pin = 6 ;
 int temp = 10 ;
 void setup() {

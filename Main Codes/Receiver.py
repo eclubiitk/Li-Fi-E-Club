@@ -1,10 +1,12 @@
 import serial
 ser = serial.Serial()
 ser.baudrate=230400
-ser.port = '/dev/ttyUSB0'
+# ser.port = '/dev/ttyUSB0'
+ser.port='COM3'
 ser.open()
 queue = [0,0,0,0,0,0,0,0,0,0]
 start_seq = [1,1,0,0,0,1,0,0,0,1]
+end_seq=[0,1,1,0,1,0,0,1,1,1]
 x={'11110':'0000',
 '01001':'0001',
 '10100':'0010',
@@ -45,17 +47,21 @@ def queuecomp(queue1, queue2) :
 
 while  True :
     while queuecomp(queue, start_seq) == False :
-        val = ser.readline().decode('ascii')[0]
-        val = int(val)
+        val = int(ser.readline().decode('ascii')[0])
         queue.pop(0)
         queue.append(val)
     # print(queue)
-    for i in range(10):
-        queue.pop(0)
-        val = (ser.readline().decode('ascii')[0])
-        queue.append(val)
-    queuex=''.join(queue)
-    q1=x2[queuex[0:5]]
-    q2=x2[queuex[5:]]
-    num=q1*16+q2
-    print(chr(num),end='')
+    while True:
+        q=[]
+        for i in range(10):
+            queue.pop(0)
+            val = (ser.readline().decode('ascii')[0])
+            queue.append(int(val))
+            q.append(val)
+        if(queuecomp(queue, start_seq)==True):
+            break
+        queuex=''.join(q)
+        q1=x2[queuex[0:5]]
+        q2=x2[queuex[5:]]
+        num=q1*16+q2
+        print(chr(num),end='')
