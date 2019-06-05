@@ -62,10 +62,10 @@ while  True :
         if(queuecomp(queue, end_seq)==True):
             flag=1
             break
-        if(flag==1):
-            break
         queuex=''.join(q)
         q1=x2[queuex[0:5]]
         q2=x2[queuex[5:]]
         num=q1*16+q2
         print(chr(num),end='')
+    if(flag==1):
+        break
