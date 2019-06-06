@@ -1,7 +1,7 @@
 import serial
 
 ser = serial.Serial()
-ser.baudrate=9600
+ser.baudrate=230400
 ser.port='COM3' #Receiver-Master
 ser.open()
 
@@ -68,20 +68,17 @@ while  True :
             queue.append(int(val))
             q.append(val)
         if(queuecomp(queue, end_seq)==True):
-            # if(st1!=st2):
-            #     flag=1
-            #     st1=st2
-            #     break
-            # else:
-            #     flag=2
-            #     break
-            flag=1
-            break
+            if(st1!=st2):
+                flag=1
+                st1=st2
+                break
+            else:
+                flag=2
+                break
         queuex=''.join(q)
         q1=x2[queuex[0:5]]
         q2=x2[queuex[5:]]
         num=q1*16+q2
-        print(chr(num),end='')
         st2=st2+chr(num)
     if(flag==1):
         st1=st2

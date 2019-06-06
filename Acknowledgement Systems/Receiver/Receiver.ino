@@ -2,7 +2,7 @@ int pin = 3;
 unsigned long duration;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(230400);
   pinMode(pin, INPUT);
 }
 

@@ -2,7 +2,7 @@ import serial
 import time
 
 ser = serial.Serial()
-ser.baudrate=9600
+ser.baudrate=230400
 ser.port='COM3' #Receiver-Slave
 ser.open()
 
@@ -74,7 +74,6 @@ while (i<len(lines)):
             val = int(ser.readline().decode('ascii')[0])
             queue.pop(0)
             queue.append(val)
-        # print(queue)
         while True:
             q=[]
             for i in range(10):
@@ -95,6 +94,7 @@ while (i<len(lines)):
             if(response[0]=='N'):
                 break
             elif(response[0]=='Y'):
+                print('Y')
                 i+=1
                 break
             else:

@@ -1,8 +1,8 @@
 int pulse_time = 150 ;
 int start = 785 ;
 int ends  = 423 ;
-String data = ":-)\nLi-Fi is the best Project.\nChange my MIND.\nThe quick brown fox jumps over the lazy dog." ;
-// String data="";
+//String data = ":-)\nLi-Fi is the BEST Project." ;
+String data="\nThe quick brown fox jumps over the lazy dog.";
 int output_pin = 6 ;
 int temp = 10 ;
 
