@@ -65,15 +65,26 @@ def queuecomp(queue1, queue2) :
     return True
 
 trans=''
-i=0
-while (i<len(lines)):
-    trans=lines[i]+'\n'
+ind=0
+t1=0
+t2=0
+while (ind<len(lines)):
+    trans=lines[ind]+'\n'
     serftr.write(trans.encode())
+    t1=time.time()
     while  True :
+        t2=time.time()
+        if(t2-t1>0.5):
+            serftr.write(trans.encode())
+            t1=t2
         while queuecomp(queue, start_seq) == False :
             val = int(ser.readline().decode('ascii')[0])
             queue.pop(0)
             queue.append(val)
+            t2=time.time()
+            if(t2-t1>0.05):
+                serftr.write(trans.encode())
+                t1=t2
         while True:
             q=[]
             for i in range(10):
@@ -90,12 +101,13 @@ while (i<len(lines)):
             num=q1*16+q2
             response=response+chr(num)
         if(flag==1):
-            response=''
             if(response[0]=='N'):
+                response=''
                 break
             elif(response[0]=='Y'):
-                print('Y')
-                i+=1
+                response=''
+                # print('Y')
+                ind+=1
                 break
             else:
                 flag=0

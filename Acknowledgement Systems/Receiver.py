@@ -82,7 +82,9 @@ while  True :
         st2=st2+chr(num)
     if(flag==1):
         st1=st2
-        print(st2)
+        print(st2[:len(st2)-1])
+        st2=''
         serftr.write('Y\n'.encode())
     if(flag==2):
-        serftr.write('N\n'.encode())
+        st2=''
+        serftr.write('Y\n'.encode())
