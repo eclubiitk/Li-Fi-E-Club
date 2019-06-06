@@ -1,14 +1,17 @@
 import serial
+import time
 
 ser = serial.Serial()
-ser.baudrate=230400
+ser.baudrate=9600
 ser.port='COM3' #Receiver-Slave
 ser.open()
 
 serftr = serial.Serial()
-serftr.baudrate=230400
+serftr.baudrate=9600
 serftr.port='COM4' #Transmitter-Master
 serftr.open()
+
+time.sleep(5)
 
 lines = []
 print("Start Entering Input")
@@ -64,7 +67,7 @@ def queuecomp(queue1, queue2) :
 trans=''
 i=0
 while (i<len(lines)):
-    trans=lines[i]
+    trans=lines[i]+'\n'
     serftr.write(trans.encode())
     while  True :
         while queuecomp(queue, start_seq) == False :

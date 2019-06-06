@@ -8,7 +8,7 @@ int temp = 10 ;
 
 void setup() {
   pinMode(output_pin, OUTPUT) ;
-  Serial.begin(230400) ;
+  Serial.begin(9600) ;
 }
 
 int enc_backend(int in) {
