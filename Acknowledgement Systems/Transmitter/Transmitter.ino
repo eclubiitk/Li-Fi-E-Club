@@ -85,7 +85,8 @@ void loop() {
           sendnum(enc((int)f));
         }
         sendnum(enc(10))  ;
-        sendnum(ends) ;}
+        sendnum(ends) ;
+        data="";}
       else
         data+=f;
     }

@@ -1,12 +1,12 @@
 import serial
 
 ser = serial.Serial()
-ser.baudrate=230400
+ser.baudrate=9600
 ser.port='COM3' #Receiver-Master
 ser.open()
 
 serftr = serial.Serial()
-serftr.baudrate=230400
+serftr.baudrate=9600
 serftr.port='COM4' #Transmitter-Slave
 serftr.open()
 
@@ -76,14 +76,16 @@ while  True :
             #     flag=2
             #     break
             flag=1
+            break
         queuex=''.join(q)
         q1=x2[queuex[0:5]]
         q2=x2[queuex[5:]]
         num=q1*16+q2
+        print(chr(num),end='')
         st2=st2+chr(num)
     if(flag==1):
         st1=st2
         print(st2)
-        serftr.write(b'Y\n')
+        serftr.write('Y\n'.encode())
     if(flag==2):
-        serftr.write(b'N\n')
+        serftr.write('N\n'.encode())
