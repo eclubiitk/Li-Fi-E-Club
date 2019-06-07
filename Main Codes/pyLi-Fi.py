@@ -130,6 +130,7 @@ elif(ch[0]=='R' or ch[0]=='r'):
     flag=0
     typef=0
     fname=''
+    lnx=0
     fobj=open('none','w')
     while  True :
         while queuecomp(queue, start_seq) == False :
@@ -170,8 +171,13 @@ elif(ch[0]=='R' or ch[0]=='r'):
                     fname=st2[:len(st2)-1]
                     fobj=open(fname,'w')
                 else:
-                    fobj.write(st2)
-                    print(st2[:len(st2)-1])
+                    if(lnx==0):
+                        lnx+=1
+                        fobj.write(st2[:len(st2)-1])
+                        fobj.write('\r')
+                    else:
+                        fobj.write(st2[1:])
+                        # print(st2[:len(st2)-1])
             if(typef==0):
                 if(st2=='file\n'):
                     typef=1
