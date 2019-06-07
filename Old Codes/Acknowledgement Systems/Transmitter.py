@@ -1,16 +1,20 @@
 import serial
 import time
 
+recport=input("Input Receiver Port : ")
+traport=input("Input Transmitter Port : ")
+
 ser = serial.Serial()
 ser.baudrate=230400
-ser.port='COM3' #Receiver-Slave
+ser.port=recport #Receiver-Slave
 ser.open()
 
 serftr = serial.Serial()
 serftr.baudrate=9600
-serftr.port='COM4' #Transmitter-Master
+serftr.port=traport #Transmitter-Master
 serftr.open()
 
+print("Initialising Transmitter. Please Wait ...")
 time.sleep(5)
 
 lines = []
