@@ -66,7 +66,7 @@ if(ch[0]=='T'):
         t1=time.time()
         while  True :
             t2=time.time()
-            if(t2-t1>0.5):
+            if(t2-t1>1):
                 serftr.write(trans.encode())
                 t1=t2
             while queuecomp(queue, start_seq) == False :
@@ -74,7 +74,7 @@ if(ch[0]=='T'):
                 queue.pop(0)
                 queue.append(val)
                 t2=time.time()
-                if(t2-t1>0.05):
+                if(t2-t1>0.5):
                     serftr.write(trans.encode())
                     t1=t2
             while True:
