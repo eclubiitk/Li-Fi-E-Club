@@ -2,8 +2,8 @@ import serial
 import time
 import os
 
-recport=input("Input Receiver Port : ")
-traport=input("Input Transmitter Port : ")
+recport=input('{:<25}'.format("Input Receiver Port : "))
+traport=input('{:<25}'.format("Input Transmitter Port : "))
 
 ser = serial.Serial()
 ser.baudrate=230400
@@ -40,20 +40,31 @@ def queuecomp(queue1, queue2) :
         return False
     return True
 
-ch=input("Type (T)ransmitter or (R)eceiver : ")
+ch=input("(T)ransmitter or (R)eceiver : ")
 
-if(ch[0]=='T'):
+if(ch[0]=='T' or ch[0]=='t'):
     print("Initialising Transmitter. Please Wait ...")
     time.sleep(5)
-
+    fl=input("Text File Path (Leave it empty for text transfer) : ")
     lines = []
-    print("Start Entering Input")
-    while True:
-        line = input()
-        if line:
-            lines.append(line)
+    if(fl!=''):
+        if(os.path.exists(fl) and os.path.isfile(fl)):
+            fl=open(fl, 'r')
+            for x in fl:
+                lines.append(x)
+            fl.close()
+            print("File Loaded Successfully.")
         else:
-            break
+            print("File Specified doesn't exist.")
+    else:
+        print("Start Entering Input")
+        while True:
+            line = input()
+            if line:
+                lines.append(line)
+            else:
+                break
+    print("Sending ...")
     response=""
     flag=0
     trans=''
@@ -102,7 +113,9 @@ if(ch[0]=='T'):
                     break
                 else:
                     flag=0
-elif(ch[0]=='R'):
+    print("Sending Successful.")
+elif(ch[0]=='R' or ch[0]=='r'):
+    print("Waiting to Receive ...")
     st1=''
     st2=''
     flag=0
