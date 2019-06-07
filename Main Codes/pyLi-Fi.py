@@ -49,6 +49,13 @@ if(ch[0]=='T' or ch[0]=='t'):
     lines = []
     if(fl!=''):
         if(os.path.exists(fl) and os.path.isfile(fl)):
+            if(os.name=='nt'):
+                fname=fl.split('\\')
+            else:
+                fname=fl.split('/')
+            fname=fname[-1]
+            lines.append('file')
+            lines.append(fname)
             fl=open(fl, 'r')
             for x in fl:
                 lines.append(x)
@@ -57,6 +64,7 @@ if(ch[0]=='T' or ch[0]=='t'):
         else:
             print("File Specified doesn't exist.")
     else:
+        lines.append('gentext')
         print("Start Entering Input")
         while True:
             line = input()
@@ -64,6 +72,7 @@ if(ch[0]=='T' or ch[0]=='t'):
                 lines.append(line)
             else:
                 break
+    lines.append('endtrans')
     print("Sending ...")
     response=""
     flag=0
@@ -119,6 +128,9 @@ elif(ch[0]=='R' or ch[0]=='r'):
     st1=''
     st2=''
     flag=0
+    typef=0
+    fname=''
+    fobj=open('none','w')
     while  True :
         while queuecomp(queue, start_seq) == False :
             val = int(ser.readline().decode('ascii')[0])
@@ -146,11 +158,29 @@ elif(ch[0]=='R' or ch[0]=='r'):
             st2=st2+chr(num)
         if(flag==1):
             st1=st2
-            print(st2[:len(st2)-1])
+            if(st2[:len(st2)-1]=='endtrans'):
+                if(fname!=''):
+                    fobj.close()
+                break
+            if(typef==2):
+                print(st2[:len(st2)-1])
+            if(typef==1):
+                if(fname==''):
+                    fname=st2[:len(st2)-1]
+                    fobj=open(fname,'w')
+                else:
+                    fobj.write(st2)
+                    print(st2[:len(st2)-1])
+            if(typef==0):
+                if(st2=='file\n'):
+                    typef=1
+                else:
+                    typef=2
             st2=''
             serftr.write('Y\n'.encode())
         if(flag==2):
             st2=''
             serftr.write('Y\n'.encode())
+    print("Reception Complete!")
 else:
     print("Wrong Choice. Start pyLi-Fi again.")
