@@ -161,6 +161,7 @@ elif(ch[0]=='R' or ch[0]=='r'):
             if(st2[:len(st2)-1]=='endtrans'):
                 if(fname!=''):
                     fobj.close()
+                serftr.write('Y\n'.encode())
                 break
             if(typef==2):
                 print(st2[:len(st2)-1])
