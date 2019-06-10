@@ -1,8 +1,8 @@
 import serial
 import time
 import os
-from Transmitter import transmit
-from Receiver import receive
+# from Transmitter import transmit
+# from Receiver import receive
 
 recport=0
 traport=0
@@ -11,7 +11,9 @@ confile="pylifi.conf"
 if(os.path.exists(confile) and os.path.isfile(confile)):
     fobj=open(confile,'r')
     recport=fobj.readline()
+    recport=recport[:len(recport)-1]
     traport=fobj.readline()
+    traport=traport[:len(traport)-1]
     fobj.close()
 else:
     recport=input('{:<25}'.format("Input Receiver Port : "))
@@ -33,6 +35,8 @@ serftr.open()
 packlen=8 # IMPORTANT : DETERMINES THE SIZE OF PACKETS 
 true_packet=[1]*packlen
 false_packet=[0]*packlen
+print(true_packet)
+print(false_packet)
 queue = [0,0,0,0,0,0,0,0,0,0]
 start_seq = [1,1,0,0,0,1,0,0,0,1]
 end_seq=[0,1,1,0,1,0,0,1,1,1]
@@ -87,7 +91,7 @@ def receive():
                     if(ppkt!=cpkt):
                         flag=1
                     else:
-                        flag=2
+                        flag=3
                 else:
                     flag=2
                 break
@@ -96,22 +100,25 @@ def receive():
             q2=x2[queuex[5:]]
             num=q1*16+q2
             cpkt.append(num)
-        if(flag==1):
+            print(cpkt)
+        if(flag==1 or flag==3):
             ppkt=cpkt
-            if(dflg>2):
-                barr=barr+cpkt
-            else:
-                dflg+=1
-                for b in cpkt:
-                    if(chr(b)!='0'):
-                        fname=fname+chr(b)
+            if(flag==1):
+                if(dflg==2):
+                    barr=barr+cpkt
+                else:
+                    dflg+=1
+                    for b in cpkt:
+                        if(chr(b)!='0'):
+                            fname=fname+chr(b)
+                        print(fname)
+                    if(dflg==2):
+                        fobj=open(fname,'wb')
             cpkt=[]
-            for m in range(8):
-                serftr.write(bytearray([1])) # true_seq shall act as replacement for Y
+            serftr.write(bytearray(true_packet)) # true_seq shall act as replacement for Y
         if(flag==2):
             cpkt=[]
-            for m in range(8):
-                serftr.write(bytearray([0])) # false_seq shall act as replacement for N
+            serftr.write(bytearray(false_packet)) # false_seq shall act as replacement for N
     fobj.write(bytearray(barr))
     print("Reception Complete!")
 
@@ -146,9 +153,12 @@ def transmit():
     if(lbarr%packlen!=0):
         buff=(lbarr//packlen+1)*packlen-lbarr
         for bfind in range(buff):
-            barr.append(0)
+            barr=barr+bytearray([0])
             lbarr+=1
-    bfind=0
+    # print(barr[0:16])
+    # print(barr[16:32])
+    # print(lbarr)
+    # bfind=0
     buff=[]
     response=""
     flag=0
@@ -160,6 +170,8 @@ def transmit():
         trans=barr[ind:ind+packlen]
         serftr.write(trans)
         t1=time.time()
+        # ind=ind+packlen
+        print(trans)
         # acknowledgement system below
         while  True :
             t2=time.time()
@@ -172,7 +184,7 @@ def transmit():
                 queue.append(val)
                 t2=time.time()
                 if(t2-t1>0.5):
-                    serftr.write(trans.encode())
+                    serftr.write(trans)
                     t1=t2
             while True:
                 q=[]
@@ -183,13 +195,13 @@ def transmit():
                     q.append(val)
                 if(queuecomp(queue, end_seq)==True and len(buff)==packlen):
                     flag=1
-                    if(bfind==packlen):
-                        if(buff==true_packet):
-                            response=1
-                        else:
-                            response=0                            
-                        bfind=0
-                        buff=[]
+                    # if(bfind==packlen):
+                    if(buff==true_packet):
+                        response=1
+                    else:
+                        response=0                            
+                    bfind=0
+                    buff=[]
                     break
                 elif(queuecomp(queue, end_seq)==True and len(buff)!=packlen): # in case, end_seq is received but buffer in not full, trigger error response
                     buff=[]
@@ -201,8 +213,10 @@ def transmit():
                 num=q1*16+q2
                 # replace the code below with receiver protocols
                 buff.append(num)
+                print(buff)
             if(flag==1):
                 if(response==0):
+                    # ind+=packlen #switch off
                     break
                 elif(response==1):
                     ind+=packlen
