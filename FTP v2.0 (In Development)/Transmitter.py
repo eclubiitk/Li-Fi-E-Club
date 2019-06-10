@@ -50,7 +50,7 @@ def transmit():
         while  True :
             t2=time.time()
             if(t2-t1>1):
-                serftr.write(trans.encode())
+                serftr.write(trans)
                 t1=t2
             while queuecomp(queue, start_seq) == False :
                 val = int(ser.readline().decode('ascii')[0])
@@ -77,7 +77,7 @@ def transmit():
                         bfind=0
                         buff=[]
                     break
-                elif(len(buff)!=packlen): # in case, end_seq is received but buffer in not full, trigger error response
+                elif(queuecomp(queue, end_seq)==True and len(buff)!=packlen): # in case, end_seq is received but buffer in not full, trigger error response
                     buff=[]
                     bfind+=1
                     break
