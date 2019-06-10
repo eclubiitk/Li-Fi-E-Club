@@ -3,9 +3,9 @@ int start = 785 ;
 int ends  = 423 ;
 int half1 ;
 int half2 ;
-int bytecount=0;
+int bytecounter=0;
 byte f;
-byte data[]=new byte[8];
+byte data[8];
 int output_pin = 6 ;
 int temp = 10 ;
 
@@ -86,8 +86,7 @@ void loop() {
           f=data[i];
           sendnum(enc((int)f));
         }
-        sendnum(ends) ;
-        data="";}
+        sendnum(ends) ;}
     }
     else{
       digitalWrite(output_pin,HIGH);

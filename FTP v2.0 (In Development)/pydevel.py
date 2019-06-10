@@ -3,8 +3,23 @@ import time
 import os
 from Transmitter import transmit
 from Receiver import receive
-recport=input('{:<25}'.format("Input Receiver Port : "))
-traport=input('{:<25}'.format("Input Transmitter Port : "))
+
+recport=0
+traport=0
+
+confile="pylifi.conf"
+if(os.path.exists(confile) and os.path.isfile(confile)):
+    fobj=open(confile,'r')
+    recport=fobj.readline()
+    traport=fobj.readline()
+    fobj.close()
+else:
+    recport=input('{:<25}'.format("Input Receiver Port : "))
+    traport=input('{:<25}'.format("Input Transmitter Port : "))
+    fobj=open(confile,'w')
+    fobj.write(recport+'\n')
+    fobj.write(traport+'\n')
+    fobj.close()
 ser = serial.Serial()
 ser.baudrate=230400
 ser.port=recport #Receiver-(Slave/Master)
@@ -44,6 +59,157 @@ def queuecomp(queue1, queue2) :
     return True
 
 ch=input("(T)ransmitter or (R)eceiver : ")
+
+def receive():
+    print("Waiting to Receive ...")
+    barr=[]
+    cpkt=[]
+    ppkt=[]
+    flag=0
+    fname=''
+    dflg=0
+    lnx=0
+    fobj=open('none','wb')
+    while  True :
+        while queuecomp(queue, start_seq) == False :
+            val = int(ser.readline().decode('ascii')[0])
+            queue.pop(0)
+            queue.append(val)
+        while True:
+            q=[]
+            for i in range(10):
+                queue.pop(0)
+                val = (ser.readline().decode('ascii')[0])
+                queue.append(int(val))
+                q.append(val)
+            if(queuecomp(queue, end_seq)==True):
+                if(len(cpkt)==packlen):
+                    if(ppkt!=cpkt):
+                        flag=1
+                    else:
+                        flag=2
+                else:
+                    flag=2
+                break
+            queuex=''.join(q)
+            q1=x2[queuex[0:5]]
+            q2=x2[queuex[5:]]
+            num=q1*16+q2
+            cpkt.append(num)
+        if(flag==1):
+            ppkt=cpkt
+            if(dflg>2):
+                barr=barr+cpkt
+            else:
+                dflg+=1
+                for b in cpkt:
+                    if(chr(b)!='0'):
+                        fname=fname+chr(b)
+            cpkt=[]
+            for m in range(8):
+                serftr.write(bytearray([1])) # true_seq shall act as replacement for Y
+        if(flag==2):
+            cpkt=[]
+            for m in range(8):
+                serftr.write(bytearray([0])) # false_seq shall act as replacement for N
+    fobj.write(bytearray(barr))
+    print("Reception Complete!")
+
+def transmit():
+    strn=''
+    print("Initialising Transmitter. Please Wait ...")
+    time.sleep(5)
+    fl=input("File Path : ")
+    barr=[]
+    if(fl!=''):
+        if(os.path.exists(fl) and os.path.isfile(fl)):
+            if(os.name=='nt'):
+                fname=fl.split('\\')
+            else:
+                fname=fl.split('/')
+            fname=fname[-1]
+            with open(fname, "rb") as image:
+                barr = bytearray(image.read())
+            print("File Loaded Successfully.")
+        else:
+            print("File Specified doesn't exist.")
+        strn=fname
+        if(len(strn)<=16):
+            g=16-len(strn)
+            for i in range(g):
+                strn=strn+"0"
+        else:
+            print("File name too big, please supply a file with name less than 16 characters.")
+    print("Sending ...")
+    barr=strn.encode()+barr
+    lbarr=len(barr)
+    if(lbarr%packlen!=0):
+        buff=(lbarr//packlen+1)*packlen-lbarr
+        for bfind in range(buff):
+            barr.append(0)
+            lbarr+=1
+    bfind=0
+    buff=[]
+    response=""
+    flag=0
+    trans=''
+    ind=0
+    t1=0
+    t2=0
+    while (ind<lbarr):
+        trans=barr[ind:ind+packlen]
+        serftr.write(trans)
+        t1=time.time()
+        # acknowledgement system below
+        while  True :
+            t2=time.time()
+            if(t2-t1>1):
+                serftr.write(trans)
+                t1=t2
+            while queuecomp(queue, start_seq) == False :
+                val = int(ser.readline().decode('ascii')[0])
+                queue.pop(0)
+                queue.append(val)
+                t2=time.time()
+                if(t2-t1>0.5):
+                    serftr.write(trans.encode())
+                    t1=t2
+            while True:
+                q=[]
+                for i in range(10):
+                    queue.pop(0)
+                    val = (ser.readline().decode('ascii')[0])
+                    queue.append(int(val))
+                    q.append(val)
+                if(queuecomp(queue, end_seq)==True and len(buff)==packlen):
+                    flag=1
+                    if(bfind==packlen):
+                        if(buff==true_packet):
+                            response=1
+                        else:
+                            response=0                            
+                        bfind=0
+                        buff=[]
+                    break
+                elif(queuecomp(queue, end_seq)==True and len(buff)!=packlen): # in case, end_seq is received but buffer in not full, trigger error response
+                    buff=[]
+                    bfind+=1
+                    break
+                queuex=''.join(q)
+                q1=x2[queuex[0:5]]
+                q2=x2[queuex[5:]]
+                num=q1*16+q2
+                # replace the code below with receiver protocols
+                buff.append(num)
+            if(flag==1):
+                if(response==0):
+                    break
+                elif(response==1):
+                    ind+=packlen
+                    break
+                else:
+                    flag=0
+    print("Sending Successful.")
 
 if(ch[0]=='T' or ch[0]=='t'):
     transmit()

@@ -1,4 +1,4 @@
-from pydevel import *
+# from pydevel import *
 # ignore warning due to circular-definition, comment-out the above line in production
 def transmit():
     strn=''
