@@ -5,11 +5,9 @@ def receive():
     barr=[]
     cpkt=[]
     ppkt=[]
-    st1=''
-    st2=''
     flag=0
-    typef=0
     fname=''
+    dflg=0
     lnx=0
     fobj=open('none','wb')
     while  True :
@@ -40,7 +38,13 @@ def receive():
             cpkt.append(num)
         if(flag==1):
             ppkt=cpkt
-            barr=barr+cpkt
+            if(dflg>2):
+                barr=barr+cpkt
+            else:
+                dflg+=1
+                for b in cpkt:
+                    if(chr(b)!='0'):
+                        fname=fname+chr(b)
             cpkt=[]
             for m in range(8):
                 serftr.write(bytearray([1])) # true_seq shall act as replacement for Y

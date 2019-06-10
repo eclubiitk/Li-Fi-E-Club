@@ -1,10 +1,10 @@
 from pydevel import *
 # ignore warning due to circular-definition, comment-out the above line in production
 def transmit():
+    strn=''
     print("Initialising Transmitter. Please Wait ...")
     time.sleep(5)
     fl=input("File Path : ")
-    # lines = []
     barr=[]
     if(fl!=''):
         if(os.path.exists(fl) and os.path.isfile(fl)):
@@ -18,16 +18,15 @@ def transmit():
             print("File Loaded Successfully.")
         else:
             print("File Specified doesn't exist.")
-    # else:
-    #     lines.append('gentext')
-    #     print("Start Entering Input")
-    #     while True:
-    #         line = input()
-    #         if line:
-    #             lines.append(line)
-    #         else:
-    #             break
+        strn=fname
+        if(len(strn)<=16):
+            g=16-len(strn)
+            for i in range(g):
+                strn=strn+"0"
+        else:
+            print("File name too big, please supply a file with name less than 16 characters.")
     print("Sending ...")
+    barr=strn.encode()+barr
     lbarr=len(barr)
     if(lbarr%packlen!=0):
         buff=(lbarr//packlen+1)*packlen-lbarr
