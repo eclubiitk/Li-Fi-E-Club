@@ -1,8 +1,6 @@
 import serial
 import time
 import os
-# from Transmitter import transmit
-# from Receiver import receive
 
 recport=0
 traport=0
@@ -35,8 +33,6 @@ serftr.open()
 packlen=8 # IMPORTANT : DETERMINES THE SIZE OF PACKETS 
 true_packet=[1]*packlen
 false_packet=[0]*packlen
-print(true_packet)
-print(false_packet)
 queue = [0,0,0,0,0,0,0,0,0,0]
 start_seq = [1,1,0,0,0,1,0,0,0,1]
 end_seq=[0,1,1,0,1,0,0,1,1,1]
@@ -100,7 +96,6 @@ def receive():
             q2=x2[queuex[5:]]
             num=q1*16+q2
             cpkt.append(num)
-            # print(cpkt)
         if(flag==1 or flag==3):
             ppkt=cpkt
             if(cpkt==[114,97,110,100,105,98,97,122]): #affected by packlen, individual and robust modification needed
@@ -112,9 +107,8 @@ def receive():
                 else:
                     dflg+=1
                     for b in cpkt:
-                        if(chr(b)!='0'):
+                        if(chr(b)!='0' and b!=0 and b!=1):
                             fname=fname+chr(b)
-                        print(fname)
                     if(dflg==2):
                         fobj=open(fname,'wb')
             cpkt=[]
@@ -144,23 +138,19 @@ def transmit():
         else:
             print("File Specified doesn't exist.")
         strn=fname
-        if(len(strn)<=2*packlen):
-            g=2*packlen-len(strn)
+        if(len(strn)<=2*packlen-2):
+            g=2*packlen-len(strn)-2
             for i in range(g):
                 strn=strn+"0"
         else:
-            print("File name too big, please supply a file with name less than 16 characters.")
+            print("File name too big.")
     print("Sending ...")
     barr=strn.encode()+barr
     lbarr=len(barr)
-    # if(lbarr%packlen!=0):
-    #     buff=(lbarr//packlen+1)*packlen-lbarr
-    #     for bfind in range(buff):
-    #         barr=barr+bytearray([0])
-    #         lbarr+=1
     ind=0
     fx=[]
     gfl=0
+    op=packlen-1
     while(ind<lbarr):
         fx.append(barr[ind])
         ind+=1
@@ -168,7 +158,8 @@ def transmit():
             gfl=0
         else:
             gfl=1
-        if(ind%packlen==packlen-1):
+        if(ind==op):
+            op+=packlen-1
             fx.append(gfl)
     barr=bytearray(fx)
     lbarr=len(barr)
@@ -179,10 +170,6 @@ def transmit():
             lbarr+=1
     lbarr+=8 #for end packet
     barr=barr+"randibaz".encode()
-    # print(barr[0:16])
-    # print(barr[16:32])
-    # print(lbarr)
-    # bfind=0
     buff=[]
     response=""
     flag=0
@@ -194,8 +181,6 @@ def transmit():
         trans=barr[ind:ind+packlen]
         serftr.write(trans)
         t1=time.time()
-        # ind=ind+packlen
-        # print(trans)
         # acknowledgement system below
         while  True :
             t2=time.time()
@@ -210,7 +195,6 @@ def transmit():
                 if(t2-t1>0.25):
                     serftr.write(trans)
                     t1=t2
-            # print("bhosadi ke")
             while True:
                 q=[]
                 for i in range(10):
@@ -220,7 +204,6 @@ def transmit():
                     q.append(val)
                 if(queuecomp(queue, end_seq)==True and len(buff)==packlen):
                     flag=1
-                    # if(bfind==packlen):
                     if(buff==true_packet):
                         response=1
                     else:
@@ -238,10 +221,8 @@ def transmit():
                 num=q1*16+q2
                 # replace the code below with receiver protocols
                 buff.append(num)
-                # print(buff)
             if(flag==1):
                 if(response==0):
-                    # ind+=packlen #switch off
                     break
                 elif(response==1):
                     ind+=packlen

@@ -1,11 +1,8 @@
 int pulse_time = 150 ;
 int start = 785 ;
 int ends  = 423 ;
-int half1 ;
-int half2 ;
-int bytecounter=0;
-byte f;
-byte data[8];
+//String data = ":-)\nLi-Fi is the best Project.\nChange my MIND.\nThe quick brown fox jumps over the lazy dog." ;
+String data="";
 int output_pin = 6 ;
 int temp = 10 ;
 
@@ -66,6 +63,8 @@ void sendnum(int num) {
 }
 
 int enc(int num) {
+  int half1 ;
+  int half2 ;
   half1 = num >> 4 ;
   half2 = num % 16 ;
   half1 = enc_backend(half1) ;
@@ -73,20 +72,27 @@ int enc(int num) {
   return (half1 * 32) + (half2) ;
 }
 
-void loop() {
+void loop() {  
+  char f;
   while(1){
     if(Serial.available()>0){
       f=Serial.read();
-      data[bytecounter++]=f;
-      if(bytecounter==8){
-        bytecounter=0;
+      if(f=='\n'){
         sendnum(start) ;
-        for (int i=0; i<8; i++)
+        for (int i=0; i<data.length(); i++)
         {
-          f=data[i];
+          char f=data.charAt(i);
           sendnum(enc((int)f));
         }
-        sendnum(ends) ;}
+        sendnum(enc(10))  ;
+        sendnum(ends) ;
+//        digitalWrite(13,HIGH);
+//        delay(1000);
+//        digitalWrite(13,LOW);
+//        delay(1000);
+        data="";}
+      else
+        data+=f;
     }
     else{
       digitalWrite(output_pin,HIGH);
