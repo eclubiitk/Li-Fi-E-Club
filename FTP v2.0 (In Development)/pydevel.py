@@ -103,6 +103,8 @@ def receive():
             print(cpkt)
         if(flag==1 or flag==3):
             ppkt=cpkt
+            if(cpkt==[114,97,110,100,105,98,97,122]):
+                break
             if(flag==1):
                 if(dflg==2):
                     barr=barr+cpkt
@@ -155,6 +157,8 @@ def transmit():
         for bfind in range(buff):
             barr=barr+bytearray([0])
             lbarr+=1
+    lbarr+=8
+    barr=barr+"randibaz".encode()
     # print(barr[0:16])
     # print(barr[16:32])
     # print(lbarr)
@@ -186,6 +190,7 @@ def transmit():
                 if(t2-t1>0.5):
                     serftr.write(trans)
                     t1=t2
+            print("bhosadi ke")
             while True:
                 q=[]
                 for i in range(10):
