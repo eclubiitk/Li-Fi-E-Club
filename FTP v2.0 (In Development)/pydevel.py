@@ -100,10 +100,11 @@ def receive():
             q2=x2[queuex[5:]]
             num=q1*16+q2
             cpkt.append(num)
-            print(cpkt)
+            # print(cpkt)
         if(flag==1 or flag==3):
             ppkt=cpkt
             if(cpkt==[114,97,110,100,105,98,97,122]):
+                serftr.write(bytearray(true_packet))
                 break
             if(flag==1):
                 if(dflg==2):
@@ -175,7 +176,7 @@ def transmit():
         serftr.write(trans)
         t1=time.time()
         # ind=ind+packlen
-        print(trans)
+        # print(trans)
         # acknowledgement system below
         while  True :
             t2=time.time()
@@ -190,7 +191,7 @@ def transmit():
                 if(t2-t1>0.5):
                     serftr.write(trans)
                     t1=t2
-            print("bhosadi ke")
+            # print("bhosadi ke")
             while True:
                 q=[]
                 for i in range(10):
@@ -218,7 +219,7 @@ def transmit():
                 num=q1*16+q2
                 # replace the code below with receiver protocols
                 buff.append(num)
-                print(buff)
+                # print(buff)
             if(flag==1):
                 if(response==0):
                     # ind+=packlen #switch off
