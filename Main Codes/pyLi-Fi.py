@@ -7,12 +7,21 @@ traport=0
 
 confile="pylifi.conf"
 if(os.path.exists(confile) and os.path.isfile(confile)):
-    fobj=open(confile,'r')
-    recport=fobj.readline()
-    recport=recport[:len(recport)-1]
-    traport=fobj.readline()
-    traport=traport[:len(traport)-1]
-    fobj.close()
+    ch=input("Configuration File Detected : Use that ? (Y/N)")
+    if(ch[0]=='y' or ch[0]=='Y'):
+        fobj=open(confile,'r')
+        recport=fobj.readline()
+        recport=recport[:len(recport)-1]
+        traport=fobj.readline()
+        traport=traport[:len(traport)-1]
+        fobj.close()
+    else:
+        recport=input('{:<25}'.format("Input Receiver Port : "))
+        traport=input('{:<25}'.format("Input Transmitter Port : "))
+        fobj=open(confile,'w')
+        fobj.write(recport+'\n')
+        fobj.write(traport+'\n')
+        fobj.close()
 else:
     recport=input('{:<25}'.format("Input Receiver Port : "))
     traport=input('{:<25}'.format("Input Transmitter Port : "))
