@@ -103,12 +103,12 @@ def receive():
             # print(cpkt)
         if(flag==1 or flag==3):
             ppkt=cpkt
-            if(cpkt==[114,97,110,100,105,98,97,122]):
+            if(cpkt==[114,97,110,100,105,98,97,122]): #affected by packlen, individual and robust modification needed
                 serftr.write(bytearray(true_packet))
                 break
             if(flag==1):
                 if(dflg==2):
-                    barr=barr+cpkt
+                    barr=barr+cpkt[:packlen-1]
                 else:
                     dflg+=1
                     for b in cpkt:
@@ -144,8 +144,8 @@ def transmit():
         else:
             print("File Specified doesn't exist.")
         strn=fname
-        if(len(strn)<=16):
-            g=16-len(strn)
+        if(len(strn)<=2*packlen):
+            g=2*packlen-len(strn)
             for i in range(g):
                 strn=strn+"0"
         else:
@@ -153,12 +153,31 @@ def transmit():
     print("Sending ...")
     barr=strn.encode()+barr
     lbarr=len(barr)
+    # if(lbarr%packlen!=0):
+    #     buff=(lbarr//packlen+1)*packlen-lbarr
+    #     for bfind in range(buff):
+    #         barr=barr+bytearray([0])
+    #         lbarr+=1
+    ind=0
+    fx=[]
+    gfl=0
+    while(ind<lbarr):
+        fx.append(barr[ind])
+        ind+=1
+        if(gfl>0):
+            gfl=0
+        else:
+            gfl=1
+        if(ind%packlen==packlen-1):
+            fx.append(gfl)
+    barr=bytearray(fx)
+    lbarr=len(barr)
     if(lbarr%packlen!=0):
         buff=(lbarr//packlen+1)*packlen-lbarr
         for bfind in range(buff):
             barr=barr+bytearray([0])
             lbarr+=1
-    lbarr+=8
+    lbarr+=8 #for end packet
     barr=barr+"randibaz".encode()
     # print(barr[0:16])
     # print(barr[16:32])
@@ -188,7 +207,7 @@ def transmit():
                 queue.pop(0)
                 queue.append(val)
                 t2=time.time()
-                if(t2-t1>0.5):
+                if(t2-t1>0.25):
                     serftr.write(trans)
                     t1=t2
             # print("bhosadi ke")
