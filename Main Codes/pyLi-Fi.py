@@ -70,7 +70,7 @@ serftr.open()
 endwrd="ElEcTrOn" # size should match packlen
 endlst=[]
 for j in endwrd:
-    endlst.append(int(j))
+    endlst.append(ord(j))
 packlen=8 # IMPORTANT : DETERMINES THE SIZE OF PACKETS 
 true_packet=[1]*packlen
 false_packet=[0]*packlen
