@@ -1,34 +1,62 @@
 import serial
 import time
 import os
+import sys
+import json
 
 recport=0
 traport=0
+user=0
 
-confile="pylifi.conf"
-if(os.path.exists(confile) and os.path.isfile(confile)):
-    ch=input("Configuration File Detected : Use that ? (Y/N)")
+flagsexec={}
+if('-f' in sys.argv):
+    flagsexec['reset']=True
+else:
+    flagsexec['reset']=False
+
+if('-t' in sys.argv):
+    flagsexec['trans']=True
+else:
+    flagsexec['trans']=False
+
+if('-r' in sys.argv):
+    flagsexec['rec']=True
+else:
+    flagsexec['rec']=False
+
+confile="pylifi.json"
+if(os.path.exists(confile) and os.path.isfile(confile) and not flagsexec['reset']):
+    ch=input("Configuration File Detected : Use that ? (Y/N) ")
     if(ch[0]=='y' or ch[0]=='Y'):
         fobj=open(confile,'r')
-        recport=fobj.readline()
-        recport=recport[:len(recport)-1]
-        traport=fobj.readline()
-        traport=traport[:len(traport)-1]
+        jd=json.load(fobj)
+        recport=jd['recport']
+        traport=jd['traport']
+        user=jd['user']
         fobj.close()
     else:
         recport=input('{:<25}'.format("Input Receiver Port : "))
         traport=input('{:<25}'.format("Input Transmitter Port : "))
+        user=input('{:<25}'.format("Input Username : "))
         fobj=open(confile,'w')
-        fobj.write(recport+'\n')
-        fobj.write(traport+'\n')
+        jd={}
+        jd['recport']=recport
+        jd['traport']=traport
+        jd['user']=user
+        json.dump(jd, fobj)
         fobj.close()
 else:
     recport=input('{:<25}'.format("Input Receiver Port : "))
     traport=input('{:<25}'.format("Input Transmitter Port : "))
+    user=input('{:<25}'.format("Input Username : "))
     fobj=open(confile,'w')
-    fobj.write(recport+'\n')
-    fobj.write(traport+'\n')
+    jd={}
+    jd['recport']=recport
+    jd['traport']=traport
+    jd['user']=user
+    json.dump(jd, fobj)
     fobj.close()
+
 ser = serial.Serial()
 ser.baudrate=230400
 ser.port=recport #Receiver-(Slave/Master)
@@ -39,6 +67,10 @@ serftr.baudrate=9600
 serftr.port=traport #Transmitter-(Master-Slave)
 serftr.open()
 
+endwrd="ElEcTrOn" # size should match packlen
+endlst=[]
+for j in endwrd:
+    endlst.append(int(j))
 packlen=8 # IMPORTANT : DETERMINES THE SIZE OF PACKETS 
 true_packet=[1]*packlen
 false_packet=[0]*packlen
@@ -67,7 +99,13 @@ def queuecomp(queue1, queue2) :
         return False
     return True
 
-ch=input("(T)ransmitter or (R)eceiver : ")
+ch=0
+if(flagsexec['trans'] and not flagsexec['rec']):
+    ch='T'
+elif(flagsexec['rec'] and not flagsexec['trans']):
+    ch='R'
+else:
+    ch=input("(T)ransmitter or (R)eceiver : ")
 
 def receive():
     print("Waiting to Receive ...")
@@ -107,7 +145,7 @@ def receive():
             cpkt.append(num)
         if(flag==1 or flag==3):
             ppkt=cpkt
-            if(cpkt==[114,97,110,100,105,98,97,122]): #affected by packlen, individual and robust modification needed
+            if(cpkt==endlst): #affected by packlen, individual and robust modification needed
                 serftr.write(bytearray(true_packet))
                 break
             if(flag==1):
@@ -146,6 +184,7 @@ def transmit():
             print("File Loaded Successfully.")
         else:
             print("File Specified doesn't exist.")
+            return
         strn=fname
         if(len(strn)<=2*packlen-2):
             g=2*packlen-len(strn)-2
@@ -153,6 +192,7 @@ def transmit():
                 strn=strn+"0"
         else:
             print("File name too big.")
+            return
     print("Sending ...")
     barr=strn.encode()+barr
     lbarr=len(barr)
@@ -178,7 +218,7 @@ def transmit():
             barr=barr+bytearray([0])
             lbarr+=1
     lbarr+=8 #for end packet
-    barr=barr+"randibaz".encode()
+    barr=barr+endwrd.encode()
     buff=[]
     response=""
     flag=0
@@ -190,7 +230,6 @@ def transmit():
         trans=barr[ind:ind+packlen]
         serftr.write(trans)
         t1=time.time()
-        # acknowledgement system below
         while  True :
             t2=time.time()
             if(t2-t1>1):
@@ -228,7 +267,6 @@ def transmit():
                 q1=x2[queuex[0:5]]
                 q2=x2[queuex[5:]]
                 num=q1*16+q2
-                # replace the code below with receiver protocols
                 buff.append(num)
             if(flag==1):
                 if(response==0):
