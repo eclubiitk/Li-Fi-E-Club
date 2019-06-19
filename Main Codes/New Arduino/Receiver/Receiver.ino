@@ -11,7 +11,7 @@ void setup() {
 void loop() {
   if(out != 0) {
     
-    if(100 <= out && out <= 124  ) {
+    if(out < 150) {
       if(flag) {
       Serial.println(1) ;
       flag = 0 ;
