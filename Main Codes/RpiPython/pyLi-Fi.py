@@ -3,7 +3,6 @@ import time
 import os
 import sys
 import json
-from receiving import setup
 
 recport=0
 traport=0
@@ -62,7 +61,6 @@ ser = serial.Serial()
 ser.baudrate=230400
 ser.port=recport #Receiver-(Slave/Master)
 ser.open()
-setup(recport)
 
 serftr = serial.Serial()
 serftr.baudrate=9600
