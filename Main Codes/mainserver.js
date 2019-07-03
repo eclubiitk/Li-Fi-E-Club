@@ -45,11 +45,15 @@ router.get('/load', (req, res) => {
 });
 
 router.get('/portvals', (req, res) => {
-    exec("python3 portlister.py",(err, stdout, stderr) => {
+    exec("python3 -m serial.tools.list_ports",(err, stdout, stderr) => {
         res.statusCode=200
-        let dt = JSON.parse(fs.readFileSync(fv, 'utf8'));
-        // dt.data.push("com3")
-        res.json(dt)
+        let dt = stdout.split('\n')
+        dt.pop(dt.length-1)
+        for(let i=0; i<dt.length; i++){
+          dt[i] = dt[i].trim()
+        }
+        dx = {data: dt}
+        res.json(dx)
         res.end()
     })
 });
