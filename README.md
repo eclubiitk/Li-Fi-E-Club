@@ -18,7 +18,25 @@ python3 pyLiFi.py
 ##### Ubuntu : System Type : posix
 
 * Install node and npm
+
 * Navigate to Main Codes folder and execute:
+```
+sudo npm i express formidable cors
+sudo python3 -m pip install pyserial
+```
+* Then RUN:
+```
+sudo python3 pyLiFi.py
+```
+
+##### OR
+
+* Navigate to Main Codes folder and RUN install.sh as root user, i.e., execute the following command(s) :
+```
+sudo chmod 777 install.sh
+sudo ./install.sh
+```
+* Execute:
 ```
 sudo npm i express formidable cors
 sudo python3 -m pip install pyserial
