@@ -1,4 +1,4 @@
-int PULSE_TIME = 50 ;
+int PULSE_TIME = 150 ;
 int start = 785 ;
 int ends  = 423 ;
 int half1 ;

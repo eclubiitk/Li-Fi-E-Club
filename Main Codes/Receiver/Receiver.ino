@@ -9,7 +9,7 @@ void setup() {
 int flag = 1 ;
 void loop() {
   duration = pulseIn(pin, HIGH);
-  if(135 < duration && duration < 165) {
+  if(duration < 150) {
     if(flag == 1) {
       Serial.println(1) ;
       flag = 0 ;

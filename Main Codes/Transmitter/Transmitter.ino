@@ -1,4 +1,4 @@
-int pulse_time = 150 ;
+int PULSE_TIME = 150 ;
 int start = 785 ;
 int ends  = 423 ;
 int half1 ;
@@ -39,38 +39,43 @@ int enc_backend(int in) {
 void sendbit(int bit) {
   if(bit == 1) {
     digitalWrite(output_pin, LOW) ;
-    delayMicroseconds(pulse_time) ;
+    delayMicroseconds(PULSE_TIME) ;
     digitalWrite(output_pin, HIGH);
-    delayMicroseconds(pulse_time) ;
+    delayMicroseconds(PULSE_TIME) ;
     digitalWrite(output_pin, LOW) ;
-    delayMicroseconds(pulse_time) ;
+    delayMicroseconds(PULSE_TIME) ;
     digitalWrite(output_pin, HIGH);
-    delayMicroseconds(pulse_time) ;
+    delayMicroseconds(PULSE_TIME) ;
+    digitalWrite(output_pin, LOW) ;
   }
   else {
     digitalWrite(output_pin, LOW) ;
-    delayMicroseconds(pulse_time * 2) ;
+    delayMicroseconds(PULSE_TIME*2) ;
     digitalWrite(output_pin, HIGH);
-    delayMicroseconds(pulse_time * 2) ;
+    delayMicroseconds(PULSE_TIME*2) ;
+    digitalWrite(output_pin, LOW) ;
   }
 }
 void sendnum(int num) {
-  int array[temp] ;
-  for(int i = temp-1 ; i >= 0 ; i--) {
-    array[i] = num % 2 ;
-    num /= 2 ;
-  }
-  for(int i = 0 ; i < temp ; i++) {
-    sendbit(array[i]) ;
+  for(int div = 512 ; div >= 1 ; div = div >> 1) {
+    if(num >= div) {
+      sendbit(1) ;
+      num -= div ;
+    }
+    else {
+      sendbit(0) ;
+    }
   }
 }
 
 int enc(int num) {
+  int half1 ;
+  int half2 ;
   half1 = num >> 4 ;
-  half2 = num % 16 ;
+  half2 = num & 15 ;
   half1 = enc_backend(half1) ;
   half2 = enc_backend(half2) ;
-  return (half1 * 32) + (half2) ;
+  return (half1 << 5) + (half2) ;
 }
 
 void loop() {

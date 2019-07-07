@@ -91,7 +91,7 @@ router.post('/transmit', (req, res) => {
         var oldpath = files.filetoupload.path;
         fname = files.filetoupload.name;
         var newpath = __dirname + '/' + fname;
-        fs.copyFileSync(oldpath, newpath, function (err) {
+        fs.copyFile(oldpath, newpath, function (err) {
           if (err) throw err;
           data = {
               mode:'transmit',
