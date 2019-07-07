@@ -1,9 +1,9 @@
 <template>
   <v-layout row justify-center>
-    <v-btn fab dark small color="green">
-      <v-icon @click.stop="xval = true">cloud_upload</v-icon>
+    <v-btn fab dark color="green darken-4" @click.stop="xval = true">
+      <v-icon>cloud_upload</v-icon>
     </v-btn>
-    <v-dialog v-model="xval" persistent max-width="600">
+    <v-dialog v-model="xval" persistent dark max-width="600">
       <v-card dark>
         <v-card-title>
           <span class="headline">Transmission Panel</span>
@@ -19,23 +19,43 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="xval = false">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click="beginTransfer">Begin Transmission</v-btn>
+          <v-btn color="green darken-1" flat @click="xval = false">Cancel</v-btn>
+          <v-btn color="green darken-1" flat @click="beginTransfer">Begin Transmission</v-btn>
+          <loader :dispdata="loadstat.title" :dialog="loadstat.stat" :color="loadstat.color"/>
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <transferStatus :dataset="responseval"/>
   </v-layout>
 </template>
 
 <script>
   import axios from "axios";
+  import loader from './loader';
+  import transferStatus from './transferStatus'
   export default {
     name: 'fileUploader',
     data () {
       return {
         xval: false,
-        file:''
+        file:'',
+        loadstat:{
+          'title':"Transmission in Progress",
+          'stat':false,
+          'color':'green darken-4'
+        },
+        responseval:{
+          active:false,
+          status:"",
+          success:false,
+          reason:""
+        }
       }
+    },
+
+    components : {
+      loader,
+      transferStatus
     },
 
     methods : {
@@ -43,6 +63,10 @@
         this.file = this.$refs.file.files[0]
       },
       beginTransfer(){
+        this.xval=false
+        this.loadstat.stat=true
+        let ldst=this.loadstat
+        let responseval=this.responseval
         let formData = new FormData();
         formData.append('filetoupload', this.file);
         axios.post( 'http://localhost:30000/transmit',
@@ -51,7 +75,18 @@
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        }).then(function(response){alert("Transmission Successful")}).catch(function(){alert('Either the file is damaged or Server is not running.');});
+        }).then(function(response) {
+          ldst.stat=false
+          responseval=response.data
+          responseval.active=true
+          }).catch(function(){
+          ldst.stat=false
+          responseval.status="Transmission Failed"
+          responseval.active=true
+          responseval.success=false
+          responseval.reason="Either the Server is closed or File sent is damaged."
+          responseval.type='T!'
+          });
       }
     }
   }

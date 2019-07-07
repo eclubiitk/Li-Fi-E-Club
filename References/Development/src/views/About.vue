@@ -1,7 +1,8 @@
 <template>
   <v-layout justify-end>
-    <v-icon @click.stop="dialog = true">help</v-icon>
-
+    <v-btn fab @click.stop="dialog = true">
+    <v-icon>help</v-icon>
+    </v-btn>
     <v-dialog dark v-model="dialog" max-width="400" >
       <v-card>
         <v-card-title class="headline">About Li-Fi : GUI</v-card-title>

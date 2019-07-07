@@ -176,7 +176,9 @@ transmit()
 tme=time.time()-tme
 datnew = {
     "status":"Successful Transmission",
-    "time":str(tme)
+    "time":str(tme),
+    "success":True,
+    "type":"T"
 }
 fw = open("filedata.json","w")
 fw.write(json.dumps(datnew))

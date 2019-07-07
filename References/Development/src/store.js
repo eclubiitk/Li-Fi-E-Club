@@ -31,7 +31,6 @@ const actions = {
     const response = await axios.get(
       'http://localhost:30000/portvals'
     );
-    console.log(response.data);
     commit('setPortNumbers', response.data);
   },
   async updatePortinfo({ commit }) {

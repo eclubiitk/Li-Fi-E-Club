@@ -125,7 +125,11 @@ fobj.write(bytearray(barr))
 tme=time.time()-tme
 datnew = {
     "status":"Successful Reception",
-    "time":str(tme)
+    "time":str(tme),
+    "fname":fname,
+    "path":"./Received/"+fname,
+    "success":True,
+    "type":"R"
 }
 fw = open("filedata.json","w")
 fw.write(json.dumps(datnew))

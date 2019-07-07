@@ -1,12 +1,12 @@
 <template>
-  <div style="padding-top:10%">
+  <div style="padding-top:5%">
     <div style="text-align:center">
     </div>
     <v-toolbar flat dark>
       <v-toolbar-title>Device Data</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn dark color="green darken-1" @click="updatePortinfo()" style="float:right">Update Configuration</v-btn>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-btn dark color="brown darken-3" @click="updatePortinfo()" style="float:right">Update Configuration</v-btn>
+      <v-dialog v-model="dialog" dark max-width="500px">
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -55,7 +55,7 @@
     </template>
     </v-data-table>
     <v-alert dark :value="updateStatus" transition="scale-transition" type="success">Ports Updated Successfully.</v-alert>
-    <br/>
+    <br/><br/><br/><br/>
     <processor />
   </div>
 </template>

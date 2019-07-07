@@ -12,7 +12,6 @@ app.use(cors())
 
 let fn = "config.json"
 let ft = "filedata.json"
-let fv = "portlist.json"
 
 router.get('/load', (req, res) => {
     let js=[]
@@ -92,7 +91,7 @@ router.post('/transmit', (req, res) => {
         var oldpath = files.filetoupload.path;
         fname = files.filetoupload.name;
         var newpath = __dirname + '/' + fname;
-        fs.rename(oldpath, newpath, function (err) {
+        fs.copyFileSync(oldpath, newpath, function (err) {
           if (err) throw err;
           data = {
               mode:'transmit',

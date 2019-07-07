@@ -7,22 +7,20 @@
       :transition="transition"
     >
       <template v-slot:activator>
-        <v-btn v-model="fab" color="blue darken-2" dark fab>
+        <v-btn v-model="fab" color="deep-purple darken-4" large dark fab>
           <v-icon>import_export</v-icon>
           <v-icon>close</v-icon>
         </v-btn>
       </template>
       <fileUploader />
-      <v-btn fab dark small color="red" @click="startReception">
-        <v-icon>cloud_download</v-icon>
-      </v-btn>
+      <fileDownloader />
     </v-speed-dial>
   </v-card>
 </template>
 
 <script>
-  import axios from 'axios'
   import fileUploader from './fileUploader'
+  import fileDownloader from './fileDownloader'
   export default {
     data: () => ({
       direction: 'right',
@@ -34,14 +32,11 @@
     }),
 
     components: {
-      fileUploader
+      fileUploader,
+      fileDownloader
     },
 
-    methods: {
-      startReception() {
-        axios.post('http://localhost:30000/receive',{}).then(function(response){alert("Transmission Successful")}).catch(function(){alert('Either the file is damaged or Server is not running.');});
-      }
-    },
+    methods: {},
 
     computed: {
       activeFab () {
