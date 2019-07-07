@@ -10,10 +10,11 @@
         <v-card-title class="headline"> {{dataset.status}} </v-card-title>
 
         <v-card-text>
-            <p :style="{display :  dataset.success ? 'block' : 'none'}">Time : {{dataset.time}} seconds.</p>
+            <p :style="{display :  dataset.success ? 'block' : 'none'}">Time  : {{Math.round(dataset.time*100) / 100}} seconds.</p>
+            <p :style="{display :  dataset.success ? 'block' : 'none'}">Speed : {{Math.round(dataset.speed*10) / 10}} Bytes/seconds (Bps).</p>
             <p :style="{display :  !dataset.success ? 'block' : 'none'}">Reason : {{dataset.reason}}</p>
-            <p :style="{display :  dataset.type == 'R' ? 'block' : 'none'}">File Name : {{dataset.fname}}</p>
-            <p :style="{display :  dataset.type == 'R' ? 'block' : 'none'}">Storage Path : {{dataset.path}}</p>
+            <p :style="{display :  (dataset.type == 'R') ? 'block' : 'none'}">File Name : {{dataset.fname}}</p>
+            <p :style="{display :  (dataset.type == 'R') ? 'block' : 'none'}">Storage Path : {{dataset.path}}</p>
         </v-card-text>
 
         <v-card-actions>

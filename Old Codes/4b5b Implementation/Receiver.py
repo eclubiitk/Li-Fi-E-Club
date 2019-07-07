@@ -2,7 +2,7 @@ import serial
 ser = serial.Serial()
 ser.baudrate=230400
 # ser.port = '/dev/ttyUSB0'
-ser.port='COM3'
+ser.port='COM4'
 ser.open()
 flag=0
 queue = [0,0,0,0,0,0,0,0,0,0]

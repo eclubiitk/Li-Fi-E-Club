@@ -176,7 +176,7 @@ transmit()
 tme=time.time()-tme
 datnew = {
     "status":"Successful Transmission",
-    "time":str(tme),
+    "time":tme,
     "success":True,
     "type":"T"
 }

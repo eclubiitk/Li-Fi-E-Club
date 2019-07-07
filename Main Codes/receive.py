@@ -125,7 +125,7 @@ fobj.write(bytearray(barr))
 tme=time.time()-tme
 datnew = {
     "status":"Successful Reception",
-    "time":str(tme),
+    "time":tme,
     "fname":fname,
     "path":"./Received/"+fname,
     "success":True,

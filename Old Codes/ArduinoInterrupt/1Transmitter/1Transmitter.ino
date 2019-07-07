@@ -1,5 +1,5 @@
-#define PULSE_TIME 50
-#define PULSE2_TIME 100
+#define PULSE_TIME 150
+#define PULSE2_TIME 300
 int start = 785 ;
 int ends  = 423 ;
 //String data = "H" ;

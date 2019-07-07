@@ -77,8 +77,12 @@
           }
         }).then(function(response) {
           ldst.stat=false
-          responseval=response.data
           responseval.active=true
+          responseval.success=true
+          responseval.status=response.data.status
+          responseval.time=response.data.time
+          responseval.speed=response.data.speed
+          responseval.type='T'
           }).catch(function(){
           ldst.stat=false
           responseval.status="Transmission Failed"

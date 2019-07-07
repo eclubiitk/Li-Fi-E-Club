@@ -4,6 +4,7 @@ var formidable = require('formidable')
 let fs = require('fs')
 const { exec } = require('child_process')
 let cors = require('cors')
+let size = 0
 
 let app = express()
 let router = express.Router()
@@ -80,7 +81,6 @@ router.post('/load', (req, res) => {
 
 router.post('/transmit', (req, res) => {
     var form = new formidable.IncomingForm();
-    
     let fname=''
     form.parse(req, function (err, fields, files) {
       if(files.filetoupload == undefined){
@@ -88,6 +88,7 @@ router.post('/transmit', (req, res) => {
         res.end()
       }
       else{
+        size = files.filetoupload._writeStream.bytesWritten
         var oldpath = files.filetoupload.path;
         fname = files.filetoupload.name;
         var newpath = __dirname + '/' + fname;
@@ -105,6 +106,8 @@ router.post('/transmit', (req, res) => {
               if(stderr==''){
                 res.statusCode=200
                 let dt = JSON.parse(fs.readFileSync(ft, 'utf8'));
+                dt.speed=size/dt.time
+                dt.path = __dirname+dt.path.substring(1)
                 res.json(dt)
                 res.end()
               }
@@ -130,6 +133,9 @@ router.post('/receive', (req, res) => {
         if(stderr==''){
           res.statusCode=200
           let dt = JSON.parse(fs.readFileSync(ft, 'utf8'));
+          size = fs.statSync(__dirname+'/'+dt.path).size
+          dt.path = __dirname+dt.path.substring(1)
+          dt.speed = size/dt.time
           res.json(dt)
           res.end()
         }

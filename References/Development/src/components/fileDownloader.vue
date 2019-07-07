@@ -50,26 +50,21 @@
     },
 
     methods : {
-      handleFileUpload(){
-        this.file = this.$refs.file.files[0]
-      },
       beginTransfer(){
         this.xval=false
         this.loadstat.stat=true
         let ldst=this.loadstat
         let responseval=this.responseval
-        let formData = new FormData();
-        formData.append('filetoupload', this.file);
-        axios.post( 'http://localhost:30000/receive',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then(function(response) {
+        axios.post( 'http://localhost:30000/receive').then(function(response) {
           ldst.stat=false
-          responseval=response.data
           responseval.active=true
+          responseval.success=true
+          responseval.status=response.data.status
+          responseval.fname=response.data.fname
+          responseval.time=response.data.time
+          responseval.path=response.data.path
+          responseval.speed=response.data.speed
+          responseval.type='R'
           }).catch(function(){
           ldst.stat=false
           responseval.status="Reception Failed"
