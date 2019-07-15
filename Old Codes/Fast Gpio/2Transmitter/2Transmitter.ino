@@ -1,16 +1,18 @@
-#define PULSE_TIME 60
-
 #include <FastGPIO.h>
+
+int PULSE_TIME = 150 ;
 int start = 785 ;
 int ends  = 423 ;
-// String data = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG \v kyu nahi chal raha hai.\n" ;
-// String data="*\v*\v*\n*\v*\v*\n*\v*\v*\n";
-String data  = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." ;
+int half1 ;
+int half2 ;
+int bytecounter=0;
+byte f;
+byte data[8];
+
 
 void setup() {
-//  pinMode(output_pin, OUTPUT) ;/
   FastGPIO::Pin<6>::setOutput(LOW) ;
-  //Serial.begin(230400) ;
+  Serial.begin(9600) ;
 }
 
 int enc_backend(int in) {
@@ -45,14 +47,12 @@ void sendbit(int bit) {
     delayMicroseconds(PULSE_TIME) ;
     FastGPIO::Pin<6>::setOutput(HIGH) ;
     delayMicroseconds(PULSE_TIME) ;
-//    FastGPIO::Pin<6>::setOutput(LOW) ;/
   }
   else {    
     FastGPIO::Pin<6>::setOutput(LOW) ;
     delayMicroseconds(PULSE_TIME*2) ;
     FastGPIO::Pin<6>::setOutput(HIGH) ;
     delayMicroseconds(PULSE_TIME*2) ;
-//    FastGPIO::Pin<6>::setOutput(LOW) ;/
   }
 }
 void sendnum(int num) {
@@ -78,32 +78,25 @@ int enc(int num) {
 }
 
 void loop() {
-
-    /*
-    sendbit(1) ;
-    sendbit(0) ;
-    sendbit(0) ;
-    */
-    
-    sendnum(start) ;
-
-    
-    for (int i=0; i<data.length(); i++)
-    {
-      char f=data.charAt(i);
-      sendnum(enc((int)f));
+  while(1){
+    if(Serial.available()>0){
+      f=Serial.read();
+      data[bytecounter++]=f;
+      if(bytecounter==8){
+        bytecounter=0;
+        sendnum(start) ;
+        for (int i=0; i<8; i++)
+        {
+          f=data[i];
+          sendnum(enc((int)f));
+        }
+        sendnum(ends) ;}
     }
-    //sendnum(enc(10))  ;
-    
-    sendnum(ends) ;
-    
-    
-    
-    /*
-    digitalWrite(6, HIGH) ;
-    delayMicroseconds(10) ;
-    digitalWrite(6, LOW) ;
-    delayMicroseconds(10) ;
-    */
-    
- }
+    else{
+      FastGPIO::Pin<6>::setOutput(HIGH) ;
+      // FastGPIO::Pin<6>::setOutput(LOW) ;
+      // Comment out the above for blinking. Uncommenting this line should solve blinking issue.
+      break;
+    }
+  }
+}

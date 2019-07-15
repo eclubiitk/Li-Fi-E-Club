@@ -107,7 +107,6 @@ router.post('/transmit', (req, res) => {
                 res.statusCode=200
                 let dt = JSON.parse(fs.readFileSync(ft, 'utf8'));
                 dt.speed=size/dt.time
-                dt.path = __dirname+dt.path.substring(1)
                 res.json(dt)
                 res.end()
               }
