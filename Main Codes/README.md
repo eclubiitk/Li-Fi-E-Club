@@ -14,8 +14,8 @@ https://github.com/utkarshg99/Li-Fi-UI
 
 ### Install the program, and copy the "Base Files" to the following directories:
 
-* Linux : \opt\LiFi
-* Windows : C:\Users\<USERNAME>\AppData\Local\Programs\LiFi
+* Linux : ```\opt\LiFi```
+* Windows : ```C:\Users\<USERNAME>\AppData\Local\Programs\LiFi```
 
 ### Before running ensure:
 
